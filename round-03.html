@@ -424,11 +424,17 @@
       audioPrompt.removeAttribute("src");
       clip.load();
       audioPrompt.load();
-      photo.src = item.image;
-      clip.src = item.video;
-      audioPrompt.src = item.audio;
-      clip.currentTime = 0;
-      audioPrompt.currentTime = 0;
+      if (item.type === "image") {
+        photo.src = item.image;
+      }
+      if (item.type === "video") {
+        clip.src = item.video;
+        clip.currentTime = 0;
+      }
+      if (item.type === "audio") {
+        audioPrompt.src = item.audio;
+        audioPrompt.currentTime = 0;
+      }
       media.dataset.type = item.type;
       if (item.type === "video") {
         clip.play().catch(() => {});

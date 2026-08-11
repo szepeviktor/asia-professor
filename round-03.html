@@ -374,7 +374,7 @@
   </div>
 
   <script>
-    const items = [
+    const items = shuffle([
       ["r3-china-shanghai", "china", "image"],
       ["r3-japan-osaka", "japan", "image"],
       ["r3-china-calligraphy", "china", "image"],
@@ -392,7 +392,7 @@
       image: `assets/${slug}.png`,
       video: `assets/${slug}.mp4`,
       audio: `assets/${slug}.wav`
-    }));
+    })));
 
     let index = 0;
     let score = 0;
@@ -409,6 +409,15 @@
     const audioPrompt = document.getElementById("audioPrompt");
     const restart = document.getElementById("restart");
     const choices = [...document.querySelectorAll(".choice")];
+
+    function shuffle(list) {
+      const copy = [...list];
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
 
     function render() {
       const item = items[index];

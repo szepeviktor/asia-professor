@@ -179,11 +179,6 @@
     }
 
     .choice {
-      font-family: "Apple Color Emoji", "Segoe UI Emoji", "Noto Color Emoji", sans-serif;
-      font-variant-emoji: emoji;
-    }
-
-    .choice {
       border: 1px solid var(--line);
       border-radius: 8px;
       background: rgba(255, 255, 255, .74);
@@ -251,6 +246,62 @@
       place-items: center;
       font-size: clamp(3.4rem, 12vw, 5.8rem);
       line-height: 1;
+    }
+
+    .flag {
+      position: relative;
+      display: block;
+      width: min(180px, 72%);
+      aspect-ratio: 3 / 2;
+      overflow: hidden;
+      border-radius: 6px;
+      box-shadow: 0 0 0 1px rgba(21, 26, 32, .18), 0 10px 24px rgba(21, 26, 32, .16);
+    }
+
+    .flag-china {
+      background: #de2910;
+    }
+
+    .flag-china::before,
+    .flag-china::after {
+      content: "";
+      position: absolute;
+      background: #ffde00;
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+
+    .flag-china::before {
+      left: 11%;
+      top: 16%;
+      width: 24%;
+      aspect-ratio: 1;
+    }
+
+    .flag-china::after {
+      left: 42%;
+      top: 18%;
+      width: 8%;
+      aspect-ratio: 1;
+      box-shadow:
+        25px 12px 0 #ffde00,
+        25px 36px 0 #ffde00,
+        0 48px 0 #ffde00;
+    }
+
+    .flag-japan {
+      background: #fff;
+    }
+
+    .flag-japan::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 38%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #bc002d;
+      transform: translate(-50%, -50%);
     }
 
     .choice[disabled],
@@ -358,8 +409,8 @@
 
         <aside class="side">
           <div class="choices">
-            <button class="choice" type="button" data-choice="china" aria-label="Kína">🇨🇳</button>
-            <button class="choice" type="button" data-choice="japan" aria-label="Japán">🇯🇵</button>
+            <button class="choice" type="button" data-choice="china" aria-label="Kína"><span class="flag flag-china"></span></button>
+            <button class="choice" type="button" data-choice="japan" aria-label="Japán"><span class="flag flag-japan"></span></button>
           </div>
         </aside>
       </section>

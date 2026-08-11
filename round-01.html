@@ -416,14 +416,20 @@
       scoreEl.textContent = `${score}/${items.length}`;
       badge.textContent = `${index + 1}/${items.length}`;
       bar.style.setProperty("--progress", `${(index / items.length) * 100}%`);
-      media.dataset.type = item.type;
+      media.dataset.type = "loading";
+      clip.pause();
+      audioPrompt.pause();
+      photo.removeAttribute("src");
+      clip.removeAttribute("src");
+      audioPrompt.removeAttribute("src");
+      clip.load();
+      audioPrompt.load();
       photo.src = item.image;
       clip.src = item.video;
       audioPrompt.src = item.audio;
-      clip.pause();
       clip.currentTime = 0;
-      audioPrompt.pause();
       audioPrompt.currentTime = 0;
+      media.dataset.type = item.type;
       if (item.type === "video") {
         clip.play().catch(() => {});
       }

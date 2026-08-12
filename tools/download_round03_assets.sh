@@ -24,7 +24,7 @@ download downloads/r3-china-garden.jpg "$(commons_file 'Chinese_garden.jpg?width
 download downloads/r3-japan-kyoto.jpg "$(commons_file 'Kyoto_Skyline.jpg?width=1280')"
 
 download downloads/r3-china-video.webm "$(commons_file 'Shanghai_Demonstration_%281946%29.webm')"
-download downloads/r3-japan-video.webm "$(commons_file 'Japanese_Tea_Garden.webm')"
+download downloads/r3-japan-video.webm "$(commons_file 'Taiko_Tsukiji_Honganji_Festival.webm')"
 
 download downloads/r3-china-audio.ogg "$(commons_file 'Chinese_Vocal_and_Instrumental_Ensemble.ogg')"
 download downloads/r3-japan-audio.ogg "$(commons_file 'Shakuhachi-flute-440Hz.ogg')"
@@ -41,7 +41,7 @@ cat > sources/round-03-media-sources.md <<'EOF'
 - r3-china-garden: https://commons.wikimedia.org/wiki/File:Chinese_garden.jpg
 - r3-japan-kyoto: https://commons.wikimedia.org/wiki/File:Kyoto_Skyline.jpg
 - r3-china-video: https://commons.wikimedia.org/wiki/File:Shanghai_Demonstration_(1946).webm
-- r3-japan-video: https://commons.wikimedia.org/wiki/File:Japanese_Tea_Garden.webm
+- r3-japan-video: https://commons.wikimedia.org/wiki/File:Taiko_Tsukiji_Honganji_Festival.webm
 - r3-china-audio: https://commons.wikimedia.org/wiki/File:Chinese_Vocal_and_Instrumental_Ensemble.ogg
 - r3-japan-audio: https://commons.wikimedia.org/wiki/File:Shakuhachi-flute-440Hz.ogg
 EOF

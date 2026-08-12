@@ -9,6 +9,6 @@
 - r3-china-garden: https://commons.wikimedia.org/wiki/File:Chinese_garden.jpg
 - r3-japan-kyoto: https://commons.wikimedia.org/wiki/File:Kyoto_Skyline.jpg
 - r3-china-video: https://commons.wikimedia.org/wiki/File:Shanghai_Demonstration_(1946).webm
-- r3-japan-video: https://commons.wikimedia.org/wiki/File:Japanese_Tea_Garden.webm
+- r3-japan-video: https://commons.wikimedia.org/wiki/File:Taiko_Tsukiji_Honganji_Festival.webm
 - r3-china-audio: https://commons.wikimedia.org/wiki/File:Chinese_Vocal_and_Instrumental_Ensemble.ogg
 - r3-japan-audio: https://commons.wikimedia.org/wiki/File:Shakuhachi-flute-440Hz.ogg

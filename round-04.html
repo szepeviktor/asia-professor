@@ -110,51 +110,43 @@
       border: 1px solid var(--line);
       border-radius: 8px;
       overflow: hidden;
+      background: #111;
+      box-shadow: var(--shadow);
+    }
+
+    .media img,
+    .media video {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: none;
+    }
+
+    .media[data-type="image"] img,
+    .media[data-type="video"] video {
+      display: block;
+    }
+
+    .audio-prompt {
+      position: absolute;
+      inset: 0;
+      display: none;
+      place-items: center;
+      padding: 24px;
       background:
         linear-gradient(rgba(17, 24, 32, .28), rgba(17, 24, 32, .28)),
         url("assets/r4-chow-chow.png") center / cover;
-      box-shadow: var(--shadow);
+    }
+
+    .media[data-type="audio"] .audio-prompt {
       display: grid;
-      place-items: center;
-      padding: clamp(22px, 5vw, 54px);
     }
 
-    .question-card {
-      width: min(620px, 100%);
-      min-height: 310px;
-      border: 1px solid rgba(255, 255, 255, .5);
-      border-radius: 8px;
-      background: rgba(255, 255, 255, .9);
-      box-shadow: 0 18px 42px rgba(0, 0, 0, .22);
-      display: grid;
-      align-content: center;
-      gap: 18px;
-      padding: clamp(22px, 5vw, 42px);
-    }
-
-    .kicker {
-      margin: 0;
-      color: var(--muted);
-      font-size: clamp(1rem, 2.8vw, 1.3rem);
-      font-weight: 850;
-      text-transform: uppercase;
-      letter-spacing: .08em;
-    }
-
-    .prompt {
-      margin: 0;
-      font-size: clamp(1.9rem, 4.6vw, 3.7rem);
-      line-height: 1.08;
-      font-weight: 950;
-      letter-spacing: 0;
-    }
-
-    .hint {
-      margin: 0;
-      color: var(--muted);
-      font-size: clamp(1.05rem, 3vw, 1.35rem);
-      line-height: 1.35;
-      font-weight: 650;
+    .audio-prompt audio {
+      width: min(460px, 92%);
+      filter: drop-shadow(0 12px 28px rgba(0, 0, 0, .3));
     }
 
     .badge {
@@ -370,13 +362,13 @@
 
     <main>
       <section class="game" id="game">
-        <div class="media">
+        <div class="media" id="media">
           <div class="badge" id="badge">1/10</div>
-          <article class="question-card">
-            <p class="kicker">Chow Chow</p>
-            <p class="prompt" id="prompt"></p>
-            <p class="hint" id="hint"></p>
-          </article>
+          <img id="photo" alt="">
+          <video id="clip" controls playsinline></video>
+          <div class="audio-prompt">
+            <audio id="audioPrompt" controls></audio>
+          </div>
         </div>
 
         <aside class="side">
@@ -398,20 +390,19 @@
 
   <script>
     const items = shuffle([
-      ["Where did the Chow Chow originally come from?", "China"],
-      ["The Chow Chow is famous for a blue-black tongue. China or Japan?", "China"],
-      ["Which country is the Chow Chow's home country?", "China"],
-      ["The fluffy lion-dog look belongs to a breed from which country?", "China"],
-      ["Ancient Chinese art sometimes shows dogs like Chow Chows. Which country?", "China"],
-      ["If a quiz says Chow Chow, the easy answer is usually which country?", "China"],
-      ["Chow Chows are one of the best-known dog breeds from where?", "China"],
-      ["This dog breed's name is tied to Chinese history. Pick the flag.", "China"],
-      ["A Chow Chow puppy is not a Japanese breed. Which flag fits?", "China"],
-      ["One more easy one: Chow Chow equals which country?", "China"]
-    ].map(([prompt, hint]) => ({
-      prompt,
-      hint,
-      answer: "china"
+      ["r4-chow-image", "china", "image"],
+      ["r4-chow-image-2", "china", "image"],
+      ["r4-chow-image-3", "china", "image"],
+      ["r4-chow-video", "china", "video"],
+      ["r4-chow-audio", "china", "audio"],
+      ["r4-chow-chow", "china", "image"]
+    ].map(([slug, answer, type]) => ({
+      slug,
+      answer,
+      type,
+      image: `assets/${slug}.png`,
+      video: `assets/${slug}.mp4`,
+      audio: `assets/${slug}.wav`
     })));
 
     let index = 0;
@@ -422,9 +413,11 @@
     const bar = document.getElementById("bar");
     const game = document.getElementById("game");
     const result = document.getElementById("result");
+    const media = document.getElementById("media");
     const badge = document.getElementById("badge");
-    const prompt = document.getElementById("prompt");
-    const hint = document.getElementById("hint");
+    const photo = document.getElementById("photo");
+    const clip = document.getElementById("clip");
+    const audioPrompt = document.getElementById("audioPrompt");
     const restart = document.getElementById("restart");
     const choices = [...document.querySelectorAll(".choice")];
 
@@ -443,8 +436,32 @@
       scoreEl.textContent = `${score}/${items.length}`;
       badge.textContent = `${index + 1}/${items.length}`;
       bar.style.setProperty("--progress", `${(index / items.length) * 100}%`);
-      prompt.textContent = item.prompt;
-      hint.textContent = item.hint;
+      media.dataset.type = "loading";
+      clip.pause();
+      audioPrompt.pause();
+      photo.removeAttribute("src");
+      clip.removeAttribute("src");
+      audioPrompt.removeAttribute("src");
+      clip.load();
+      audioPrompt.load();
+      if (item.type === "image") {
+        photo.src = item.image;
+      }
+      if (item.type === "video") {
+        clip.src = item.video;
+        clip.currentTime = 0;
+      }
+      if (item.type === "audio") {
+        audioPrompt.src = item.audio;
+        audioPrompt.currentTime = 0;
+      }
+      media.dataset.type = item.type;
+      if (item.type === "video") {
+        clip.play().catch(() => {});
+      }
+      if (item.type === "audio") {
+        audioPrompt.play().catch(() => {});
+      }
       choices.forEach((choice) => {
         choice.disabled = false;
         choice.classList.remove("correct", "wrong");

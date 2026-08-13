@@ -1,0 +1,501 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Asia Professor - Round 04</title>
+  <style>
+    :root {
+      --ink: #151a20;
+      --muted: #68717d;
+      --panel: rgba(255, 255, 255, .86);
+      --line: rgba(21, 26, 32, .14);
+      --gold: #c8942d;
+      --ok: #167a4a;
+      --bad: #b23a38;
+      --shadow: 0 18px 44px rgba(21, 26, 32, .16);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      color: var(--ink);
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at 18% 12%, rgba(200, 148, 45, .22), transparent 28rem),
+        radial-gradient(circle at 86% 75%, rgba(48, 114, 125, .18), transparent 30rem),
+        linear-gradient(135deg, #f4eadb, #e7f0ee 52%, #f9ece7);
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .wrap {
+      min-height: 100vh;
+      width: min(1120px, 100%);
+      margin: 0 auto;
+      padding: clamp(14px, 3vw, 32px);
+      display: grid;
+      grid-template-rows: auto 1fr;
+      gap: 16px;
+    }
+
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    h1 {
+      margin: 0;
+      color: var(--ink);
+      font-size: clamp(2rem, 6vw, 4.8rem);
+      line-height: 1;
+      letter-spacing: 0;
+    }
+
+    .meter {
+      min-width: 122px;
+      display: grid;
+      gap: 8px;
+      justify-items: end;
+    }
+
+    .score {
+      padding: 9px 12px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      font-weight: 850;
+      box-shadow: 0 10px 24px rgba(21, 26, 32, .10);
+    }
+
+    .bar {
+      width: min(100%, 180px);
+      height: 9px;
+      border-radius: 99px;
+      border: 1px solid var(--line);
+      overflow: hidden;
+      background: rgba(255, 255, 255, .56);
+    }
+
+    .bar span {
+      display: block;
+      width: var(--progress, 0%);
+      height: 100%;
+      background: linear-gradient(90deg, #bc3138, #d49a2c, #2e7180);
+      transition: width .28s ease;
+    }
+
+    main {
+      display: grid;
+      align-content: center;
+      gap: 16px;
+    }
+
+    .game {
+      display: grid;
+      grid-template-columns: minmax(0, 1.35fr) minmax(270px, .65fr);
+      gap: 16px;
+      align-items: stretch;
+    }
+
+    .media {
+      position: relative;
+      min-height: 580px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      background:
+        linear-gradient(rgba(17, 24, 32, .28), rgba(17, 24, 32, .28)),
+        url("assets/r4-chow-chow.png") center / cover;
+      box-shadow: var(--shadow);
+      display: grid;
+      place-items: center;
+      padding: clamp(22px, 5vw, 54px);
+    }
+
+    .question-card {
+      width: min(620px, 100%);
+      min-height: 310px;
+      border: 1px solid rgba(255, 255, 255, .5);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .9);
+      box-shadow: 0 18px 42px rgba(0, 0, 0, .22);
+      display: grid;
+      align-content: center;
+      gap: 18px;
+      padding: clamp(22px, 5vw, 42px);
+    }
+
+    .kicker {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1rem, 2.8vw, 1.3rem);
+      font-weight: 850;
+      text-transform: uppercase;
+      letter-spacing: .08em;
+    }
+
+    .prompt {
+      margin: 0;
+      font-size: clamp(1.9rem, 4.6vw, 3.7rem);
+      line-height: 1.08;
+      font-weight: 950;
+      letter-spacing: 0;
+    }
+
+    .hint {
+      margin: 0;
+      color: var(--muted);
+      font-size: clamp(1.05rem, 3vw, 1.35rem);
+      line-height: 1.35;
+      font-weight: 650;
+    }
+
+    .badge {
+      position: absolute;
+      left: 14px;
+      top: 14px;
+      z-index: 2;
+      min-width: 76px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid rgba(255,255,255,.34);
+      background: rgba(10, 12, 14, .54);
+      color: #fff;
+      text-align: center;
+      font-size: 1.6rem;
+      backdrop-filter: blur(8px);
+    }
+
+    .side {
+      min-height: 580px;
+      padding: clamp(14px, 3vw, 22px);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      display: grid;
+      grid-template-rows: 1fr;
+      gap: 14px;
+    }
+
+    .choice,
+    .icon-button {
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: rgba(255, 255, 255, .74);
+      cursor: pointer;
+      transition: transform .16s ease, border-color .16s ease, box-shadow .16s ease;
+    }
+
+    .choice:hover,
+    .choice:focus-visible,
+    .icon-button:hover,
+    .icon-button:focus-visible {
+      transform: translateY(-2px);
+      border-color: var(--gold);
+      box-shadow: 0 10px 20px rgba(21, 26, 32, .12);
+      outline: none;
+    }
+
+    .choices {
+      display: grid;
+      align-content: center;
+      gap: 12px;
+    }
+
+    .choice {
+      min-height: 128px;
+      display: grid;
+      place-items: center;
+    }
+
+    .flag {
+      position: relative;
+      display: block;
+      width: min(180px, 72%);
+      aspect-ratio: 3 / 2;
+      overflow: hidden;
+      border-radius: 6px;
+      box-shadow: 0 0 0 1px rgba(21, 26, 32, .18), 0 10px 24px rgba(21, 26, 32, .16);
+    }
+
+    .flag-china {
+      background: #de2910;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 20'%3E%3Cpolygon fill='%23ffde00' points='0,-3 .67,-.93 2.85,-.93 1.09,.35 1.76,2.43 0,1.15 -1.76,2.43 -1.09,.35 -2.85,-.93 -.67,-.93' transform='translate(5,5)'/%3E%3Cg fill='%23ffde00'%3E%3Cpolygon points='0,-1 .22,-.31 .95,-.31 .36,.12 .59,.81 0,.38 -.59,.81 -.36,.12 -.95,-.31 -.22,-.31' transform='translate(10,2) rotate(23)'/%3E%3Cpolygon points='0,-1 .22,-.31 .95,-.31 .36,.12 .59,.81 0,.38 -.59,.81 -.36,.12 -.95,-.31 -.22,-.31' transform='translate(12,4) rotate(45)'/%3E%3Cpolygon points='0,-1 .22,-.31 .95,-.31 .36,.12 .59,.81 0,.38 -.59,.81 -.36,.12 -.95,-.31 -.22,-.31' transform='translate(12,7) rotate(69)'/%3E%3Cpolygon points='0,-1 .22,-.31 .95,-.31 .36,.12 .59,.81 0,.38 -.59,.81 -.36,.12 -.95,-.31 -.22,-.31' transform='translate(10,9) rotate(20)'/%3E%3C/g%3E%3C/svg%3E");
+      background-size: cover;
+    }
+
+    .flag-japan {
+      background: #fff;
+    }
+
+    .flag-japan::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 38%;
+      aspect-ratio: 1;
+      border-radius: 50%;
+      background: #bc002d;
+      transform: translate(-50%, -50%);
+    }
+
+    .choice[disabled],
+    .icon-button[disabled] {
+      cursor: default;
+      transform: none;
+      opacity: .72;
+    }
+
+    .choice.correct {
+      border-color: var(--ok);
+      box-shadow: 0 0 0 4px rgba(22, 122, 74, .16);
+    }
+
+    .choice.wrong {
+      border-color: var(--bad);
+      box-shadow: 0 0 0 4px rgba(178, 58, 56, .16);
+    }
+
+    .result {
+      display: none;
+      min-height: 580px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: var(--panel);
+      box-shadow: var(--shadow);
+      place-items: center;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .result.show {
+      display: grid;
+    }
+
+    .result-inner {
+      display: grid;
+      gap: 20px;
+      justify-items: center;
+    }
+
+    .result-score {
+      font-size: clamp(3.8rem, 14vw, 8rem);
+      font-weight: 900;
+      line-height: 1;
+    }
+
+    .icon-button {
+      min-width: 92px;
+      min-height: 54px;
+      position: relative;
+    }
+
+    .icon-button::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      width: 22px;
+      height: 22px;
+      border: 3px solid var(--ink);
+      border-right-color: transparent;
+      border-radius: 50%;
+      transform: translate(-50%, -50%) rotate(-35deg);
+    }
+
+    .icon-button::after {
+      content: "";
+      position: absolute;
+      left: calc(50% + 9px);
+      top: calc(50% - 13px);
+      width: 0;
+      height: 0;
+      border-left: 8px solid var(--ink);
+      border-top: 6px solid transparent;
+      border-bottom: 6px solid transparent;
+      transform: rotate(20deg);
+    }
+
+    @media (max-width: 820px) {
+      .game {
+        grid-template-columns: 1fr;
+      }
+
+      .media,
+      .side,
+      .result {
+        min-height: 420px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      header {
+        align-items: stretch;
+        flex-direction: column;
+      }
+
+      .meter {
+        width: 100%;
+        justify-items: stretch;
+      }
+
+      .bar {
+        width: 100%;
+      }
+
+      .choice {
+        min-height: 96px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>Asia Professor</h1>
+      <div class="meter">
+        <div class="score" id="score">0/10</div>
+        <div class="bar" aria-hidden="true"><span id="bar"></span></div>
+      </div>
+    </header>
+
+    <main>
+      <section class="game" id="game">
+        <div class="media">
+          <div class="badge" id="badge">1/10</div>
+          <article class="question-card">
+            <p class="kicker">Chow Chow</p>
+            <p class="prompt" id="prompt"></p>
+            <p class="hint" id="hint"></p>
+          </article>
+        </div>
+
+        <aside class="side">
+          <div class="choices">
+            <button class="choice" type="button" data-choice="china" aria-label="China"><span class="flag flag-china"></span></button>
+            <button class="choice" type="button" data-choice="japan" aria-label="Japan"><span class="flag flag-japan"></span></button>
+          </div>
+        </aside>
+      </section>
+
+      <section class="result" id="result">
+        <div class="result-inner">
+          <div class="result-score" id="resultScore">0/10</div>
+          <button class="icon-button" id="restart" type="button" aria-label="Restart"></button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script>
+    const items = shuffle([
+      ["Where did the Chow Chow originally come from?", "China"],
+      ["The Chow Chow is famous for a blue-black tongue. China or Japan?", "China"],
+      ["Which country is the Chow Chow's home country?", "China"],
+      ["The fluffy lion-dog look belongs to a breed from which country?", "China"],
+      ["Ancient Chinese art sometimes shows dogs like Chow Chows. Which country?", "China"],
+      ["If a quiz says Chow Chow, the easy answer is usually which country?", "China"],
+      ["Chow Chows are one of the best-known dog breeds from where?", "China"],
+      ["This dog breed's name is tied to Chinese history. Pick the flag.", "China"],
+      ["A Chow Chow puppy is not a Japanese breed. Which flag fits?", "China"],
+      ["One more easy one: Chow Chow equals which country?", "China"]
+    ].map(([prompt, hint]) => ({
+      prompt,
+      hint,
+      answer: "china"
+    })));
+
+    let index = 0;
+    let score = 0;
+    let answered = false;
+
+    const scoreEl = document.getElementById("score");
+    const bar = document.getElementById("bar");
+    const game = document.getElementById("game");
+    const result = document.getElementById("result");
+    const badge = document.getElementById("badge");
+    const prompt = document.getElementById("prompt");
+    const hint = document.getElementById("hint");
+    const restart = document.getElementById("restart");
+    const choices = [...document.querySelectorAll(".choice")];
+
+    function shuffle(list) {
+      const copy = [...list];
+      for (let i = copy.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [copy[i], copy[j]] = [copy[j], copy[i]];
+      }
+      return copy;
+    }
+
+    function render() {
+      const item = items[index];
+      answered = false;
+      scoreEl.textContent = `${score}/${items.length}`;
+      badge.textContent = `${index + 1}/${items.length}`;
+      bar.style.setProperty("--progress", `${(index / items.length) * 100}%`);
+      prompt.textContent = item.prompt;
+      hint.textContent = item.hint;
+      choices.forEach((choice) => {
+        choice.disabled = false;
+        choice.classList.remove("correct", "wrong");
+      });
+    }
+
+    function nextQuestion() {
+      window.setTimeout(() => {
+        index += 1;
+        if (index >= items.length) {
+          finish();
+        } else {
+          render();
+        }
+      }, 950);
+    }
+
+    function choose(choice) {
+      if (answered) return;
+      answered = true;
+      const item = items[index];
+      const ok = choice === item.answer;
+      if (ok) score += 1;
+      scoreEl.textContent = `${score}/${items.length}`;
+
+      choices.forEach((button) => {
+        button.disabled = true;
+        if (button.dataset.choice === item.answer) button.classList.add("correct");
+        if (button.dataset.choice === choice && !ok) button.classList.add("wrong");
+      });
+
+      nextQuestion();
+    }
+
+    function finish() {
+      game.style.display = "none";
+      result.classList.add("show");
+      bar.style.setProperty("--progress", "100%");
+      document.getElementById("resultScore").textContent = `${score}/${items.length}`;
+    }
+
+    choices.forEach((button) => button.addEventListener("click", () => choose(button.dataset.choice)));
+    restart.addEventListener("click", () => {
+      index = 0;
+      score = 0;
+      game.style.display = "";
+      result.classList.remove("show");
+      render();
+    });
+
+    render();
+  </script>
+</body>
+</html>
